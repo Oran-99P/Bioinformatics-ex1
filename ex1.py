@@ -207,7 +207,6 @@ def search_for_glider_patterns_3x3(max_generations=30, wraparound=True):
     runs automaton, and checks if any of them becomes a glider.
     """
     N = 10
-    MAX_TRIES = 1000
     tries = 0
 
     print(f"Scanning 3x3 patterns (wraparound = {'on' if wraparound else 'off'})...")
