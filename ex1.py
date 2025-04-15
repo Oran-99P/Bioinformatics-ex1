@@ -319,56 +319,67 @@ def search_for_glider_patterns_4x4(max_generations=30, wraparound=True):
 # Question 3 - Oscillator Simulation
 def run_oscillator_simulation():
     """
-    Runs oscillator simulation (Q3).
-    Shows patterns that repeat every few generations in-place.
-    Wraparound is disabled.
+    Runs oscillator simulation on a small grid and detects if a specific local pattern repeats.
     """
-    N = 20
+    N = 6
     grid = np.zeros((N, N), dtype=int)
 
-    # Oscillator pattern (starts as vertical bar)
-    # It will flip every generation into horizontal
+    # Define a specific oscillator pattern and place it in the center
     oscillator = np.array([
-        [1, 1],
-        [0, 0]
-    ])
-    grid[5:7, 5:7] = oscillator
-
-    # Add a second one to make it interesting
-    oscillator2 = np.array([
-        [0, 0],
+        [1, 0],
         [1, 1]
     ])
-    grid[10:12, 10:12] = oscillator2
+    i, j = 2, 2  # Coordinates of top-left corner
+    grid[i:i+2, j:j+2] = oscillator
 
     generations = 20
+    subgrid_history = []
+    repeat_detected = False
+    repeated_pattern = None
+
     for generation in range(1, generations + 1):
         parity = generation % 2
         blocks = get_blocks(grid, parity=parity, wraparound=False)
         new_grid = grid.copy()
 
-        for (i, j), block in blocks:
+        for (bi, bj), block in blocks:
             updated_block = process_block(block)
             for di in range(2):
                 for dj in range(2):
-                    ni = i + di
-                    nj = j + dj
+                    ni = bi + di
+                    nj = bj + dj
                     if ni < N and nj < N:
                         new_grid[ni, nj] = updated_block[di, dj]
 
+        # Extract and store the current 2x2 region at (i,j)
+        current_subgrid = new_grid[i:i+2, j:j+2]
+
+        for idx, past_subgrid in enumerate(subgrid_history):
+            if np.array_equal(past_subgrid, current_subgrid):
+                print(f"[Cycle Detected] Sub-pattern repeats every {generation - (idx + 1)} generations.")
+                repeat_detected = True
+                repeated_pattern = current_subgrid
+                break  # stop after first match
+
+        subgrid_history.append(current_subgrid.copy())
         grid = new_grid.copy()
 
         if generation % 2 == 0 or generation == generations:
-            print(f"[Oscillator Simulation] Generation {generation}")
+            print(f"Generation {generation}")
             display_grid(grid, generation)
 
-############################################
-# Main Interface
-############################################
+    # Print the repeating pattern at the end
+    if repeat_detected:
+        print("Repeated sub-pattern:")
+        print(repeated_pattern)
+    else:
+        print("No repeating sub-pattern detected.")
 
+
+# Main Interface
 def main():
     """
-    Main menu interface allowing user to choose simulation type.
+    Main menu interface allowing the user to choose a simulation type.
     """
     while True:
         print("""
@@ -398,14 +409,13 @@ Run Question 1 with:
                 else:
                     print("Invalid input. Please choose 1, 2 or 3.")
 
-        
         elif choice == '2':
             while True:
                 print("""
-                Glider Pattern Search (Q2):
-                1. Search all 3x3 patterns
-                2. Search all 4x4 patterns
-                3. Back to main menu
+Glider Pattern Search (Q2):
+1. Search all 3x3 patterns
+2. Search all 4x4 patterns
+3. Back to main menu
                 """)
                 sub_choice = input("Enter your choice (1-3): ").strip()
 
