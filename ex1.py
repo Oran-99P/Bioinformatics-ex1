@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from itertools import product
 
 # Utility Functions
-
 def generate_initial_grid(N, prob_one=0.5, interactive=True):
     """
     Generates an initial NxN binary grid based on user-selected probability.
@@ -125,7 +124,6 @@ def display_grid(grid, generation, title_suffix=""):
     plt.tight_layout()
     plt.show()
 
-
 # Simulation Function – Question 1
 def run_simulation(N=100, generations=250, wraparound=False, show_final=True):
     """
@@ -193,7 +191,6 @@ def insert_custom_glider(grid, i, j):
     pattern[4:6, 4:6] = 1
 
     grid[i:i+6, j:j+6] = pattern
-
 
 def insert_many_gliders(grid, spacing=12):
     """
@@ -274,7 +271,6 @@ Choose grid size:
             display_grid(new_grid, generation=generation)
 
         grid = new_grid.copy()
-
 
 # Question 3 - Oscillator Simulation
 def insert_random_oscillator(grid, force_type=None, center=False):
@@ -438,7 +434,6 @@ Choose known oscillator:
         for g in range(min(6, len(history))):
             display_grid_with_box(history[g], generation=g, box_coords=box)
 
-
 # Main Interface
 def main():
     """
@@ -481,6 +476,7 @@ Run Question 1 with:
             break
         else:
             print("Invalid input. Please choose 1-4.")
-
+            
+#Run the main function
 if __name__ == '__main__':
     main()
